@@ -1,5 +1,7 @@
 # Data Centre Power Analysis (Ireland, 2015-2025)
 
+📄 [Read the full report (PDF)](report/report.pdf)
+
 Analysis of how Irish data centre electricity demand has grown, where it is heading, and whether clean electricity is keeping up, using official CSO and SEAI data.
 
 ## Problem
