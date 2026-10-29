@@ -39,7 +39,7 @@ Dublin, Ireland\\
 \vspace{4mm}
 }]
 
-\noindent\textbf{\textit{Abstract}---Data centres are the fastest-growing electricity users in Ireland. This project uses official Central Statistics Office (CSO) and Sustainable Energy Authority of Ireland (SEAI) data to answer three questions: how fast data centre demand is growing, where it is heading by 2030, and whether clean electricity is keeping up. Data centres used 23.2\% of metered electricity in 2025, up from 5.0\% in 2015, a sixfold increase in consumption while all other users grew by about 8\%. Yearly growth peaked at 32\% in 2021 and slowed to about 10\% in 2024 and 2025. Three growth scenarios place the 2030 share between 27\% and 42\%, with a central estimate of about 32\%. Comparing added demand with added wind, solar and hydro output shows that data centres absorbed about 94\% of new clean electricity from 2015 to 2025, and that since 2020 their demand has grown about three times faster than clean supply.}
+\noindent\textbf{\textit{Abstract}---Data centres are the fastest-growing electricity users in Ireland. This project uses official Central Statistics Office (CSO) and Sustainable Energy Authority of Ireland (SEAI) data to answer three questions: how fast data centre demand is growing, where it is heading by 2030, and whether clean electricity is keeping up. Data centres used 23.2\% of metered electricity in 2025, up from 5.0\% in 2015, a sixfold increase in consumption while all other users grew by about 8\%. Yearly growth peaked at 32\% in 2021 and slowed to about 10\% in 2024 and 2025. Three growth scenarios place the 2030 share between 27\% and 42\%, with a central estimate of about 32\%. Comparing added demand with added wind, solar and hydro output shows that data centres absorbed about 94\% of new clean electricity from 2015 to 2025, and that since 2020 their demand has grown about three times faster than clean supply. Yearly totals were reconciled against the CSO's published figures in Python, Excel and SQL, and all 11 years matched within 1~GWh.}
 
 \section{Introduction}
 
@@ -82,7 +82,29 @@ The CSO table holds 132 values: 44 quarters for three categories (all metered co
 
 The CSO table arrived with three rows per quarter and two columns that were constant in every row. It was pivoted to one row per quarter, the unused columns were dropped, and the categories were renamed. Quarterly shares fluctuate with the seasons, because homes use more electricity in winter and the data centre share dips. This is noise rather than trend, so quarters were summed into calendar years.
 
-Yearly totals were validated against the CSO's published figures. Data centre consumption matched within 1~GWh in every year checked (for example, 6,974 against a published 6,973~GWh for 2024); the gap comes from rounding in the quarterly figures. In the quarters checked, data centres plus other customers equalled the published total, confirming the table was internally consistent.
+\subsection{Reconciliation Across Three Tools}
+
+Yearly data centre totals were reconciled against the CSO's published annual figures [1] independently in Python, Excel and SQL (Table~\ref{tab:recon}). In Excel, a helper column extracted the year from each quarter label, \texttt{SUMIFS} summed the quarters per year, \texttt{XLOOKUP} pulled the published figure, and an \texttt{IF} test flagged any year outside a 1~GWh tolerance. In SQL (SQLite), a common table expression aggregated the quarters, a \texttt{JOIN} matched each year to the published table, and \texttt{CASE WHEN} assigned the result.
+
+\begin{table}[h]
+\centering
+\caption{Reconciliation against CSO published figures}
+\label{tab:recon}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.2cm}>{\raggedright\arraybackslash}p{3.7cm}c@{}}
+\toprule
+Tool & Method & Years passed \\
+\midrule
+Python & Pandas \texttt{groupby} and sum & 11 / 11 \\
+Excel & \texttt{SUMIFS}, \texttt{XLOOKUP}, \texttt{IF} & 11 / 11 \\
+SQL & CTE, \texttt{JOIN}, \texttt{CASE WHEN} & 11 / 11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All three tools produced identical yearly totals. Every year matched the published figure within 1~GWh: three years matched exactly and eight differed by 1~GWh, in both directions. Differences that are small and scattered both ways point to rounding of the published quarterly figures rather than a calculation error.
+
+An Excel pivot table of yearly totals by category exposed one trap. The source table includes a category that is already the national total, so summing all categories counted consumption twice (49,199~GWh for 2015 instead of about 24,600). Excluding that category gave 24,600~GWh for 2015, equal to the CSO's published total. The pivot's percentage-of-row view reproduced the yearly data centre share, from 5.04\% in 2015 to 23.23\% in 2025.
 
 \subsection{Growth Measures}
 
@@ -198,7 +220,7 @@ Data centre demand rises smoothly every year, while clean supply swings with the
 
 Data centre demand in Ireland is growing more slowly than in 2021 and 2022, but it still rises every year and has outpaced new clean electricity since 2020. If current trends continue, data centres will use around a third of national electricity by 2030, and unless wind and solar build-out speeds up, more of the extra demand will be met by gas and imports.
 
-Future work could add biomass and other renewables to the clean supply measure, model faster growth in other demand from electrification, use monthly data to study seasonal pressure on the grid, and present the results in an interactive dashboard.
+Future work could convert the clean supply gap into the wind and solar capacity Ireland would need to build each year, add biomass and other renewables to the clean supply measure, model faster growth in other demand from electrification, use monthly data to study seasonal pressure on the grid, and present the results in an interactive dashboard.
 
 \section*{References}
 \footnotesize\raggedright
