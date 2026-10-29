@@ -34,6 +34,8 @@ Data centre electricity use in Ireland is growing much faster than everyone else
 - Calculated yearly growth rates and 10-year compound annual growth (CAGR).
 - Built three forecast scenarios to 2030 (5%, 10% and 20% yearly data centre growth).
 - Extracted wind, solar and hydro production from 11 yearly sheets of SEAI's energy balance and converted ktoe to GWh.
+- Reconciled yearly data centre totals against the CSO's published figures in Excel (SUMIFS, XLOOKUP) and built a pivot table for yearly totals and shares by category.
+- Repeated the reconciliation in SQL (SQLite) using a CTE, a JOIN and CASE WHEN. All 11 years matched in Python, Excel and SQL, within 1 GWh due to quarterly rounding.
 
 ## Limitations
 
@@ -50,10 +52,12 @@ Data centre electricity use in Ireland is growing much faster than everyone else
 
 ## Tools
 
-Python, Pandas, Matplotlib, Jupyter, Git
+Python, Pandas, Matplotlib, Jupyter, Excel (SUMIFS, XLOOKUP, pivot tables), SQL (SQLite), Git
 
 ## How to run
 
     pip install -r requirements.txt
 
-Then open `notebooks/01_explore_data.ipynb` and run all cells.
+- `notebooks/01_explore_data.ipynb`: main analysis, forecasts and charts
+- `notebooks/02_sql_validation.ipynb`: SQL reconciliation against CSO figures
+- `excel/dc_reconciliation.xlsx`: Excel reconciliation and pivot table
