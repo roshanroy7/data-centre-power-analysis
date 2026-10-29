@@ -2,3 +2,6 @@
 .DS_Store
 .ipynb_checkpoints/
 __pycache__/
+.venv
+.venv.nosync/
+printf "data/processed/*.db\n" >> .gitignore
